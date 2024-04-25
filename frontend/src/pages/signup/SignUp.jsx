@@ -1,6 +1,28 @@
-import React from 'react'
+import React, { useState } from 'react'
 import GenderCheckbox from './GenderCheckbox'
+import { Link } from 'react-router-dom'
+import { set } from 'mongoose';
+import useSignup from '../../hooks/useSignup';
 const SignUp = () => {
+
+  const [inputs, setInputs] = useState({
+    fullName: "",
+    username: "",
+    password: "",
+    confirmPassword: "",
+    gender: "",
+  });
+
+  const handleCheckboxChange = (gender) => {
+    setInputs({...inputs, gender})
+  } 
+
+  const {loading, signup} = useSignup();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await signup(inputs);
+  }
+  
   return (
     <div className='flex flex-col items-center justify-center min-w-100 mx-auto  w-100'>
       <div className='h-full w-full bg-blue-100 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10
@@ -13,11 +35,11 @@ const SignUp = () => {
         <span className='text-black'> SIGN UP </span>
         </h1>
 
-        <form >
+        <form onSubmit={handleSubmit}>
         <div >
             <label className='label p-2 flex flex-col items-center justify-center'>
               <span className='text-2xl label-text text-white-500'>Full Name </span>
-              <input type='text' placeholder='Enter username' className='w-150 input input-bordered h-8  my-3' />
+              <input type='text' placeholder='Enter fullname' className='w-150 input input-bordered h-8  my-3' value={inputs.fullName} onChange={(e) => setInputs({...inputs, fullName: e.target.value})} />
             </label>
             
 
@@ -25,7 +47,7 @@ const SignUp = () => {
           <div >
             <label className='label p-2 flex flex-col items-center justify-center'>
               <span className='text-2xl label-text text-white-500'>Username</span>
-              <input type='text' placeholder='Enter username' className='w-150 input input-bordered h-8 py-5 my-3' />
+              <input type='text' placeholder='Enter username' className='w-150 input input-bordered h-8 py-5 my-3' value={inputs.username} onChange={(e) => setInputs({...inputs, username: e.target.value})}/>
             </label>
             
 
@@ -33,7 +55,7 @@ const SignUp = () => {
           <div >
             <label className='label p-2 flex flex-col items-center justify-center'>
               <san className='text-2xl label-text text-white-500'>Password</san>
-              <input type='password' placeholder='Enter Password' className='w-150 input input-bordered h-8 py-5 my-3' />
+              <input type='password' placeholder='Enter Password' className='w-150 input input-bordered h-8 py-5 my-3' value={inputs.password} onChange={(e) => setInputs({...inputs, password: e.target.value})}/>
             </label>
             
 
@@ -41,20 +63,22 @@ const SignUp = () => {
           <div >
             <label className='label p-2 flex flex-col items-center justify-center'>
               <san className='text-2xl label-text text-white-500'>Confirm Password</san>
-              <input type='password' placeholder='Confirm Password' className='w-150 input input-bordered h-8 py-5 my-3' />
+              <input type='password' placeholder='Confirm Password' className='w-150 input input-bordered h-8 py-5 my-3' value={inputs.confirmPassword} onChange={(e) => setInputs({...inputs, confirmPassword: e.target.value})}/>
             </label>
             
 
           </div>
           <div className='flex items-center justify-center'>
-          <GenderCheckbox/>
+          <GenderCheckbox onCheckboxChange={handleCheckboxChange} selectedGender={inputs.gender} />
           </div>
           
-          <a href='#' className='text-2xl  hover:underline hover:text-red-200 mt-2 inline-block  flex items-center justify-center '>
+          <Link to={'/login'} className='text-2xl  hover:underline hover:text-red-200 mt-2 inline-block  flex items-center justify-center '>
  						Already have an account?
- 					</a>
+ 					</Link>
            <div className='flex items-center justify-center'>
-						<button className=' btn btn-ghost mt-2 bg-black hover:bg-gray-500 max-w-50'>Sign Up</button>
+						<button className=' btn btn-ghost mt-2 bg-black hover:bg-gray-500 max-w-50' disabled={loading}>
+            {loading ? <span className='loading loading-spinner'></span> : "Sign Up"}
+            </button>
 					</div>
            
         </form>
